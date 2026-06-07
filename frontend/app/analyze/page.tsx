@@ -1,56 +1,98 @@
 "use client";
 
 import { useState } from "react";
-
+const API_URL =
+  "https://aurevia-backend-production-41e5.up.railway.app";
 export default function AnalyzePage() {
   const [file, setFile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
-
+  const [progress, setProgress] = useState(0);
+  const [stage, setStage] = useState("");
   const handleUpload = async () => {
-    if (!file) {
-      alert("Please upload a CV PDF");
-      return;
+  if (!file) {
+    alert("Please upload a CV PDF");
+    return;
+  }
+
+  setLoading(true);
+  setProgress(0);
+  setStage("📄 Uploading CV...");
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  let currentProgress = 0;
+
+  const interval = setInterval(() => {
+    currentProgress += 10;
+
+    if (currentProgress <= 20) {
+      setStage("📄 Uploading CV...");
+    } else if (currentProgress <= 40) {
+      setStage("🧠 Extracting Resume Data...");
+    } else if (currentProgress <= 60) {
+      setStage("🎯 Analyzing Skills...");
+    } else if (currentProgress <= 80) {
+      setStage("📊 Calculating ATS Score...");
+    } else {
+      setStage("🚀 Generating Career Insights...");
     }
 
-    setLoading(true);
+    if (currentProgress < 90) {
+      setProgress(currentProgress);
+    }
+  }, 700);
 
-    const formData = new FormData();
-    formData.append("file", file);
+  try {
+   const response = await fetch(
+  `${API_URL}/analyze`,
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
 
-    try {
-      const response = await fetch(
-        "https://aurevia-backend-r18t.onrender.com/analyze",
-        {
-          method: "POST",
-          body: formData,
-        }
-      );
+    const data = await response.json();
 
-     const data = await response.json();
-
+    clearInterval(interval);
+    if (data.session_id) {
+  localStorage.setItem(
+    "session_id",
+    data.session_id
+  );
+}
+   
     setResult(data);
 
-    // Save globally
     localStorage.setItem(
       "cvData",
       JSON.stringify(data)
     );
 
-    
-    } catch (error) {
-      console.log(error);
+    setTimeout(() => {
+      setLoading(false);
+      setProgress(0);
+      setStage("");
+    }, 1000);
 
-      alert("AI Analysis Failed");
-    }
+  } catch (error) {
+    clearInterval(interval);
+
+    console.log(error);
+
+    alert("AI Analysis Failed");
 
     setLoading(false);
-  };
-
+    setProgress(0);
+    setStage("");
+  }
+};
+  
   const downloadPDF = async () => {
   try {
-    const response = await fetch(
-      "https://aurevia-backend-r18t.onrender.com/generate-report",
+      const response = await fetch(
+  `${API_URL}/generate-report`,
       {
         method: "POST",
         headers: {
@@ -148,10 +190,61 @@ export default function AnalyzePage() {
             cursor: "pointer",
           }}
         >
+          
           {loading ? "Analyzing..." : "Analyze CV"}
         </button>
+        
       </div>
+      {loading && (
+  <div
+    style={{
+      marginTop: "25px",
+      width: "100%",
+      maxWidth: "700px",
+    }}
+  >
+    <div
+      style={{
+        width: "100%",
+        height: "22px",
+        background: "#1e293b",
+        borderRadius: "999px",
+        overflow: "hidden",
+        border: "1px solid #6b21a8",
+      }}
+    >
+      <div
+        style={{
+          width: `${progress}%`,
+          height: "100%",
+          background:
+            "linear-gradient(90deg,#9333ea,#c084fc)",
+          transition: "width 0.5s ease",
+        }}
+      />
+    </div>
 
+    <p
+      style={{
+        marginTop: "12px",
+        color: "#d8b4fe",
+        fontSize: "20px",
+        fontWeight: "bold",
+      }}
+    >
+      {stage}
+    </p>
+
+    <p
+      style={{
+        color: "#94a3b8",
+        fontSize: "18px",
+      }}
+    >
+      Progress: {progress}%
+    </p>
+  </div>
+)}    
      {result && (
   <>
 
@@ -342,21 +435,15 @@ export default function AnalyzePage() {
           border: "1px solid #9333ea",
         }}
       >
-        <h2
-          style={{
-            color: "#d8b4fe",
-            textAlign: "center",
-            marginBottom: "25px",
-          }}
-        >
-
-         <p style={{color:"red", fontSize:"50px"}}>
-          TEST TEST TEST
-          </p>
-
-          🚀 Explore More Features
-        </h2>
-
+      <h2
+      style={{
+    color: "#d8b4fe",
+    textAlign: "center",
+    marginBottom: "25px",
+  }}
+  > 
+  🚀 Explore More Features
+      </h2>
         <div
           style={{
             display: "grid",
