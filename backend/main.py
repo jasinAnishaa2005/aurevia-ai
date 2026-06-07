@@ -1,3 +1,4 @@
+from chromadb import PersistentClient
 from urllib import response
 
 from fastapi import FastAPI, UploadFile, File
@@ -5,9 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from groq import Groq
 from PyPDF2 import PdfReader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
+
 
 
 from fastapi.responses import FileResponse
@@ -30,8 +29,6 @@ from typing import Optional
 from threading import Lock
 
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings
 
 
 
@@ -49,24 +46,58 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+class JinaEmbeddings:
+
+    def embed_documents(self, texts):
+
+        embeddings = []
+
+        for text in texts:
+
+            response = httpx.post(
+                "https://api.jina.ai/v1/embeddings",
+                headers={
+                    "Authorization":
+                    f"Bearer {os.getenv('JINA_API_KEY')}"
+                },
+                json={
+                    "model":
+                    "jina-embeddings-v3",
+                    "input":
+                    [text]
+                }
+            )
+
+            data = response.json()
+
+            embeddings.append(
+                data["data"][0]["embedding"]
+            )
+
+        return embeddings
+
+    def embed_query(self, text):
+
+        return self.embed_documents(
+            [text]
+        )[0]
+        
+        
 GROQ_API_KEY = os.getenv("GROQ_API_KEY", "").strip()
 
 client = Groq(api_key=GROQ_API_KEY)
 user_sessions = {}
+chroma_client = PersistentClient(path="./chroma_db")
+
+collection = chroma_client.get_or_create_collection(
+    name="cv_chunks"
+)
 session_lock = Lock()
 
-embedding_model = None
+
 vectorstore = None
 
-def get_embedding_model():
-    global embedding_model
-
-    if embedding_model is None:
-        embedding_model = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2"
-        )
-
-    return embedding_model
 
 
 class CalendarEventRequest(BaseModel):
@@ -179,11 +210,25 @@ async def analyze(file: UploadFile = File(...)):
         )
 
         chunks = splitter.split_text(cv_text)
+        
+        
+        for i, chunk in enumerate(chunks):
 
-        vectorstore = FAISS.from_texts(
-            chunks,
-            get_embedding_model()
-        )
+            collection.add(
+                ids=[f"{session_id}_{i}"],
+                documents=[chunk]
+            )
+            
+        session_id = str(uuid.uuid4())
+        with session_lock:
+            user_sessions[session_id] = {
+                "cv_text": cv_text,
+                "chunks": chunks,
+                "extracted_data": data,
+                "tracker": [],
+                "todos": [],
+                "calendar": []
+            }
         
 
         if not cv_text.strip():
@@ -408,6 +453,8 @@ CV:
 
         print("FINAL DATA:")
         print(data)
+        data["session_id"] = session_id
+
         return data
 
         
@@ -820,24 +867,20 @@ async def chat(data: dict):
 
     cv = session["extracted_data"]
 
-    if vectorstore is None:
-        return {
-            "answer": "Please upload a CV first."
-        }
-
-    docs = vectorstore.similarity_search(
-        question,
-        k=3
+    results = collection.query(
+        query_texts=[question],
+        n_results=3
     )
+
+    retrieved_docs = results["documents"][0]
 
     context = "\n\n".join(
-        [doc.page_content for doc in docs]
+        retrieved_docs
     )
-
     messages = [
-        {
-            "role": "system",
-            "content": f"""
+            {
+                "role": "system",
+                "content": f"""
 You are Aurevia AI Career Assistant.
 
 Always use the candidate CV as the source of truth.

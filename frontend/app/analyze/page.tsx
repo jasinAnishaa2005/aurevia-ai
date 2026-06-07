@@ -1,14 +1,33 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Link from "next/link";
+
 const API_URL =
   "https://aurevia-backend-production-41e5.up.railway.app";
+
+
+
 export default function AnalyzePage() {
   const [file, setFile] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<any>(null);
+
   const [progress, setProgress] = useState(0);
   const [stage, setStage] = useState("");
+
+  const [cvData, setCvData] = useState(null);
+
+  useEffect(() => {
+  const saved =
+    localStorage.getItem("cvData");
+
+  if (saved) {
+    setCvData(JSON.parse(saved));
+  }
+}, []);
+
+
   const handleUpload = async () => {
   if (!file) {
     alert("Please upload a CV PDF");
@@ -67,7 +86,10 @@ export default function AnalyzePage() {
 
     localStorage.setItem(
       "cvData",
-      JSON.stringify(data)
+      JSON.stringify({
+        ...data,
+        session_id: data.session_id
+      })
     );
 
     setTimeout(() => {
@@ -244,9 +266,10 @@ export default function AnalyzePage() {
       Progress: {progress}%
     </p>
   </div>
-)}    
+)}  
+
      {result && (
-  <>
+      <>
 
      <button
        onClick={downloadPDF}
@@ -435,64 +458,79 @@ export default function AnalyzePage() {
           border: "1px solid #9333ea",
         }}
       >
-      <h2
-      style={{
-    color: "#d8b4fe",
-    textAlign: "center",
-    marginBottom: "25px",
-  }}
-  > 
-  🚀 Explore More Features
-      </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns:
-              "repeat(auto-fit,minmax(220px,1fr))",
-            gap: "20px",
-          }}
-        >
-          <FeatureButton
-            title="🤖 AI Assistant"
-            link="/chat"
-          />
+     
 
-          <FeatureButton
-            title="💼 Jobs"
-            link="/jobs"
-          />
+  <h2
+    style={{
+      color: "#d8b4fe",
+      textAlign: "center",
+      marginBottom: "25px",
+      fontSize: "32px",
+    }}
+  >
+    🚀 Career Hub
+  </h2>
 
-          <FeatureButton
-            title="🗺 Roadmap"
-            link="/roadmap"
-          />
+  <p
+    style={{
+      textAlign: "center",
+      color: "#94a3b8",
+      marginBottom: "30px",
+    }}
+  >
+    Your CV is now connected to all Aurevia features
+  </p>
 
-          <FeatureButton
-            title="📈 Dashboard"
-            link="/dashboard"
-          />
+  <div
+    style={{
+      display: "grid",
+      gridTemplateColumns:
+        "repeat(auto-fit,minmax(220px,1fr))",
+      gap: "20px",
+    }}
+  >
+    <FeatureButton
+      title="🤖 AI Assistant"
+      link="/chat"
+    />
 
-          <FeatureButton
-            title="📋 Tracker"
-            link="/tracker"
-          />
-        </div>
-      </div>
-  </>
+    <FeatureButton
+      title="💼 Job Hunter"
+      link="/jobs"
+    />
+
+
+    <FeatureButton
+      title="🗺 Roadmap"
+      link="/roadmap"
+    />
+
+    <FeatureButton
+      title="📈 Dashboard"
+      link="/dashboard"
+    />
+
+    <FeatureButton
+      title="📋 Tracker"
+      link="/tracker"
+    />
+  </div>
+</div>
+</>
 )}
     </div>
   );
 }
 
 
-function Card({
-  title,
-  content,
-}: {
-  title: string;
-  content: any;
-}) {
-  return (
+  function Card({
+    title,
+    content,
+  }: {
+    title: string;
+    content: any;
+  }) {
+    return (
     <div
       style={{
         background: "#081225",
@@ -528,16 +566,12 @@ function Card({
 
       
 
-      function FeatureButton(props: any) {
-  const { title, link } = props;
-
+   function FeatureButton({title,link,}: {
+  title: string;
+  link: string;
+}) {
   return (
-    <a
-      href={link}
-      style={{
-        textDecoration: "none",
-      }}
-    >
+    <Link href={link}>
       <div
         style={{
           background:
@@ -549,10 +583,11 @@ function Card({
           fontWeight: "bold",
           fontSize: "20px",
           cursor: "pointer",
+          transition: "0.3s",
         }}
       >
         {title}
       </div>
-    </a>
+    </Link>
   );
 }

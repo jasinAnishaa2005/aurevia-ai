@@ -4,11 +4,9 @@ groq
 python-dotenv
 PyPDF2
 reportlab
-faiss-cpu
-sentence-transformers
 langchain
 langchain-community
-langchain-huggingface
 langchain-text-splitters
+chromadb
 httpx
 python-multipart
