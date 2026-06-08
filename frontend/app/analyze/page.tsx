@@ -18,14 +18,31 @@ export default function AnalyzePage() {
 
   const [cvData, setCvData] = useState(null);
 
+  useEffect(() => {
+  const handleRefresh = () => {
+    sessionStorage.removeItem("analysisResult");
+  };
+
+  window.addEventListener("beforeunload", handleRefresh);
+
+  return () => {
+    window.removeEventListener("beforeunload", handleRefresh);
+  };
+}, []);
+
  useEffect(() => {
-const saved = sessionStorage.getItem("cvData");
+  const saved =
+    sessionStorage.getItem("analysisResult");
 
   if (saved) {
-    const data = JSON.parse(saved);
+    setResult(JSON.parse(saved));
+  }
 
-    setCvData(data);
-    setResult(data);
+  const cv =
+    sessionStorage.getItem("cvData");
+
+  if (cv) {
+    setCvData(JSON.parse(cv));
   }
 }, []);
 
@@ -35,6 +52,8 @@ const saved = sessionStorage.getItem("cvData");
     alert("Please upload a CV PDF");
     return;
   }
+   
+   
 
   setLoading(true);
   setProgress(0);
@@ -75,6 +94,13 @@ const saved = sessionStorage.getItem("cvData");
     );
 
     const data = await response.json();
+
+        setResult(data);
+
+    sessionStorage.setItem(
+      "analysisResult",
+      JSON.stringify(data)
+    );
 
     clearInterval(interval);
     if (data.session_id) {
@@ -491,6 +517,8 @@ const saved = sessionStorage.getItem("cvData");
       gap: "20px",
     }}
   >
+
+
     <FeatureButton
       title="🤖 AI Assistant"
       link="/chat"
