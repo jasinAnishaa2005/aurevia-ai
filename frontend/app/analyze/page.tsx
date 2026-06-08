@@ -19,7 +19,7 @@ export default function AnalyzePage() {
   const [cvData, setCvData] = useState(null);
 
  useEffect(() => {
-  const saved = localStorage.getItem("cvData");
+const saved = sessionStorage.getItem("cvData");
 
   if (saved) {
     const data = JSON.parse(saved);
@@ -86,7 +86,7 @@ export default function AnalyzePage() {
    
     setResult(data);
 
-    localStorage.setItem(
+    sessionStorage.setItem(
       "cvData",
       JSON.stringify({
         ...data,
