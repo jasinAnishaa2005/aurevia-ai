@@ -210,6 +210,7 @@ async def analyze(file: UploadFile = File(...)):
         )
 
         chunks = splitter.split_text(cv_text)
+        session_id = str(uuid.uuid4())
         
         
         for i, chunk in enumerate(chunks):
@@ -218,17 +219,6 @@ async def analyze(file: UploadFile = File(...)):
                 ids=[f"{session_id}_{i}"],
                 documents=[chunk]
             )
-            
-        session_id = str(uuid.uuid4())
-        with session_lock:
-            user_sessions[session_id] = {
-                "cv_text": cv_text,
-                "chunks": chunks,
-                "extracted_data": data,
-                "tracker": [],
-                "todos": [],
-                "calendar": []
-            }
         
 
         if not cv_text.strip():
@@ -437,8 +427,6 @@ CV:
         data["cv_score"] = cv_score
         data["ats_score"] = ats_score
        
-
-        session_id = str(uuid.uuid4())
 
         with session_lock:
             user_sessions[session_id] = {
