@@ -571,7 +571,12 @@ export default function AnalyzePage() {
   link: string;
 }) {
   return (
-    <Link href={link}>
+        <Link href={link}
+      style={{
+        textDecoration: "none",
+        color: "inherit",
+      }}
+>
       <div
         style={{
           background:
