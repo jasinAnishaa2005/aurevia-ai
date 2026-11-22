@@ -1,111 +1,59 @@
-# Aurevia AI – Career Intelligence Platform
+<div align="center">
 
-## Overview
+<img src="https://raw.githubusercontent.com/jasinAnishaa2005/jasinAnishaa2005/main/assets/anisha-profile-banner-v2.svg" alt="Aurevia AI — career intelligence platform" width="100%" />
 
-Aurevia AI is an AI-powered career co-pilot that helps users analyze their CVs, discover career opportunities, evaluate job fit, generate cover letters, build learning roadmaps, and track job applications.
+# Aurevia AI — Career Intelligence Platform ✨
 
-The platform combines AI analysis, career planning, and productivity tools into a single experience.
+**An AI-powered career co-pilot for CV insights, job discovery, and career planning.**
 
----
+[![Next.js](https://img.shields.io/badge/Frontend-Next.js-5b3828?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-c9a27e?style=for-the-badge&logo=fastapi&logoColor=2d211b)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-Backend-795548?style=for-the-badge&logo=python&logoColor=white)](https://python.org/)
 
-## Features
+*Turning career questions into clearer next steps.*
 
-### CV Analysis
-
-* Upload PDF CV
-* AI-powered profession detection
-* Skills extraction
-* Strength analysis
-* Weakness analysis
-* Career recommendations
-* CV Score
-* ATS Score
-
-### Job Hunter Agent
-
-* Search jobs
-* View role, company, location, salary, deadline
-* Fit score for each opportunity
-
-### Fit Score Engine
-
-* Compare CV skills against job descriptions
-* Identify matching skills
-* Identify missing skills
-* Generate percentage fit score
-
-### AI Career Assistant
-
-* Career guidance
-* Skill recommendations
-* Job readiness evaluation
-* Personalized responses
-
-### Cover Letter Generator
-
-* Generate tailored cover letters
-* Uses candidate profile and job description
-
-### Career Roadmap Generator
-
-* Creates learning roadmap
-* Weekly and monthly career planning
-
-### Productivity Tools
-
-* Goals & To-Do Manager
-* Application Tracker
-* Career Dashboard
+</div>
 
 ---
 
-## Tech Stack
+## 🌷 Overview
 
-### Frontend
+Aurevia AI helps users analyze their CVs, discover career opportunities, evaluate job fit, generate cover letters, build learning roadmaps, and track job applications. It brings AI-assisted career analysis, planning, and productivity tools into one platform.
 
-* Next.js
-* React
+## ✨ Features
 
-### Backend
+- **CV analysis:** PDF upload, profession detection, skills extraction, strengths, weaknesses, career recommendations, CV score, and ATS score
+- **Job hunter:** Search opportunities and view role, company, location, salary, deadline, and fit score
+- **Fit score engine:** Compare CV skills with job descriptions and identify matches and gaps
+- **AI career assistant:** Career guidance, skill recommendations, and job-readiness evaluation
+- **Cover letter generator:** Draft tailored cover letters from a candidate profile and job description
+- **Career roadmaps:** Create weekly and monthly learning plans
+- **Productivity tools:** Goals, to-dos, application tracking, and a career dashboard
 
-* FastAPI
-* Python
+## 🧰 Tech stack
 
-### AI
+| Layer | Technologies |
+|---|---|
+| Frontend | Next.js, React |
+| Backend | FastAPI, Python |
+| AI | Groq API, Llama models |
+| Deployment | Vercel, Render |
 
-* Groq API
-* Llama Models
+## 🏗️ High-level architecture
 
-### Deployment
-
-* Vercel
-* Render
-
----
-
-## Project Architecture
-
+```text
 User
+  ↓
+Next.js frontend
+  ↓
+FastAPI backend
+  ↓
+Groq AI / Llama models
+  ↓
+Career insights and recommendations
+```
 
-↓
-
-Next.js Frontend
-
-↓
-
-FastAPI Backend
-
-↓
-
-Groq AI
-
-↓
-
-Career Analysis & Recommendations
-
----
-
-## Installation
+## 🚀 Run locally
 
 ### Frontend
 
@@ -123,39 +71,33 @@ pip install -r requirements.txt
 uvicorn main:app --reload
 ```
 
----
+## 🔐 Environment variables
 
-## Environment Variables
-
-Create a `.env` file:
+Create a backend `.env` file and add your own key:
 
 ```env
 GROQ_API_KEY=your_api_key_here
 ```
 
----
+Never commit real API keys or secrets.
 
-## Live Demo
+## 🌐 Demo
 
-Frontend:
-https://aurevia-ai-uocr.vercel.app
+- **Frontend:** [Aurevia AI](https://aurevia-ai-uocr.vercel.app)
+- **Backend:** [API deployment](https://aurevia-backend-r18t.onrender.com)
 
-Backend:
-https://aurevia-backend-r18t.onrender.com
+## 🌱 Future improvements
 
----
-
-## Future Improvements
-
-* Real Job APIs
-* Vector Database
-* RAG Pipeline
-* Interview Preparation Module
-* Calendar Integration
-* Advanced Analytics Dashboard
+- Real job API integrations
+- Vector database and RAG pipeline
+- Interview preparation module
+- Calendar integration
+- Advanced analytics
 
 ---
 
-## Team
+<div align="center">
 
-Built for Codesprint – CareerPilot Challenge.
+**Built for the Codesprint — CareerPilot Challenge.** 🤎
+
+</div>
