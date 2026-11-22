@@ -1,15 +1,6 @@
 <div align="center">
 
-<img src="https://raw.githubusercontent.com/jasinAnishaa2005/jasinAnishaa2005/main/assets/anisha-profile-banner-v2.svg" alt="Aurevia AI — career intelligence platform" width="100%" />
-
-
-<div align="center">
-
-<img src="assets/project-preview.svg" alt="Aurevia AI animated project preview" width="100%" />
-
-</div>
-
-# Aurevia AI — Career Intelligence Platform ✨
+<img src="assets/readme-banner.svg" alt="Aurevia AI — career intelligence platform" width="100%" />\n\n# Aurevia AI — Career Intelligence Platform ✨
 
 **An AI-powered career co-pilot for CV insights, job discovery, and career planning.**
 
